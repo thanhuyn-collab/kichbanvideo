@@ -86,11 +86,17 @@ const App: React.FC = () => {
         parts.push({ text: "Không có video tham khảo. Hãy tự suy luận kịch bản viral dựa trên kinh nghiệm thực chiến tại Hà Nội." });
       }
 
-      const parsedResult = {
-  content: "Demo content chạy OK"
-};
-setResult(parsedResult);
-return;
+      const response = await genAI.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: [{ role: 'user', parts }],
+        config: {
+          responseMimeType: "application/json",
+        }
+      });
+
+      const text = response.text;
+      const parsedResult = JSON.parse(text) as FinalResult;
+      setResult(parsedResult);
     } catch (err: any) {
       console.error('Error generating content:', err);
       setError('Có lỗi xảy ra khi tạo nội dung. Vui lòng thử lại.');
